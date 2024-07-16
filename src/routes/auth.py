@@ -13,13 +13,14 @@ def register():
     if User.query.filter_by(username=username).all():
         return jsonify({'message': 'User already exists'}), 400
 
+
     new_user = User(username=username)
     new_user.set_password(password)
 
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({'message': 'User registered successfully'}), 201
+    return jsonify({'message': 'User registered successfully', 'uid': new_user.id, 'username': new_user.username}), 201
 
 
 @auth_bp.route('/login', methods=['POST'])
