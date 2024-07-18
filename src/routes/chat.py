@@ -7,6 +7,14 @@ from src.service.message_service import record_message, get_message
 chat_bp = Blueprint('chat', __name__)
 
 
+@chat_bp.route('/get_history', methods=['GET'])
+def get_history_message():
+    chat_id = request.args.get('chatId')
+    messages = get_message(int(chat_id))
+    messages.append({'username': 'system', 'content': ' ^ ^ ^ ^ ^ Past Message ^ ^ ^ ^ ^ '})
+    return jsonify(messages), 200
+
+
 @chat_bp.route('/search_user', methods=['GET'])
 def search_user():
     username = request.args.get('username')
@@ -58,14 +66,12 @@ def on_join(data):
     room = data['room']
     join_room(room)
 
-    messages = get_message(int(room))
-    for message in messages:
-        send(message, to=room)
+    # messages = get_message(int(room))
+    # for message in messages:
+    #     send(message, to=room)
 
-    send({'username': 'system', 'content': ' ^ ^ ^ ^ ^ Past Message ^ ^ ^ ^ ^ '}, to=room)
-
-    # message = {'username': username, 'content': " has entered the room."}
-    # send(message, to=room)
+    message = {'username': username, 'content': " entered the room."}
+    send(message, to=room)
 
 
 @socketio.on('leave')
